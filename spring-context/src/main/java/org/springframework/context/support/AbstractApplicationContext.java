@@ -547,9 +547,16 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 			StartupStep contextRefresh = this.applicationStartup.start("spring.context.refresh");
 
 			// Prepare this context for refreshing.
+			// 准备该上下文的刷新
+			// p:准备该上下文以进行刷新，设置其启动日期和activie标记以及
+			// 执行属性源的任何 初始化。还有监听器都初始化
 			prepareRefresh();
 
 			// Tell the subclass to refresh the internal bean factory.
+			// 告诉子类刷新内部bean工厂
+			// 对此上下文的基础bean工厂进行实际刷新，关闭前一个bean工厂（如果有），
+			// 并为上下文生命周期的下一个阶段初始化一个新的bean工厂,并使用XmlBeanDefinitionReader
+			// 将bean定义加载给bean工厂中
 			ConfigurableListableBeanFactory beanFactory = obtainFreshBeanFactory();
 
 			// Prepare the bean factory for use in this context.
@@ -557,32 +564,60 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 
 			try {
 				// Allows post-processing of the bean factory in context subclasses.
+				// 允许在上下文子类中对bean工厂进行后处理
 				postProcessBeanFactory(beanFactory);
 
 				StartupStep beanPostProcess = this.applicationStartup.start("spring.context.beans.post-process");
 				// Invoke factory processors registered as beans in the context.
+				// 调用在上下文中注册为bean的工厂处理器
+				// 实例化并调用所有注册BeanFactoryPostProcess bean，并遵从显式顺序（如果给定的话）
 				invokeBeanFactoryPostProcessors(beanFactory);
 
 				// Register bean processors that intercept bean creation.
+				// 注册拦截Bean创建的 BeanPostProcessor
+				// 实例化和注册所有 BeanPostProcessor 类型的Bean对象,如果给定的话，遵循显示顺序.
+				// 必须在应用程序Bean的任何实例化之前调用
 				registerBeanPostProcessors(beanFactory);
 				beanPostProcess.end();
 
 				// Initialize message source for this context.
+				// 为此上下文初始化消息源
+				// 从当前BeanFactory中获取名为 'messageSource' 的 MessageSource 类型的Bean对象,如果没有找到，就创建 一个
+				// DelegatingMessageSource 对象作为该上下文的 messageSource 属性值,并将该上下文的 messageSource 注册到 该
+				// 上下文的BeanFactory中。
+				// 默认对该上下文的messageSource设置父级messageSource,父级messageSource为父级上下文的messageSoure属性对象
+				// 或者父级上下文本身
 				initMessageSource();
 
 				// Initialize event multicaster for this context.
+				// 为此上下文初始化事件多播器
+				// 从从beanFactory中获取名为 'applicationEventMulticaster' 的 ApplicationEventMulticaster 类型的Bean对象，
+				// 引用到 该上下文的 applicationEventMulticaster 属性，如果获取不到，就新建一个
+				// SimpleApplicationEventMulticaster 实例 引用 到 上下文的 applicationEventMulticaster 属性 中
 				initApplicationEventMulticaster();
 
 				// Initialize other special beans in specific context subclasses.
+				// 初始化特定上下文子类中的其他特殊Bean
 				onRefresh();
 
 				// Check for listener beans and register them.
+				// 检查监听器Bean并注册它们
+				// 注册静态指定的监听器和beanFactory内的监听器Bean对象【不会导致监听器Bean对象实例化，仅记录其Bean名】到当前上
+				// 下文 的多播器，然后发布在多播程序设置之前发布的ApplicationEvent集到各个监听器中
 				registerListeners();
 
 				// Instantiate all remaining (non-lazy-init) singletons.
+				// 实例化所有剩余的(非延迟初始化)的单例
+				// 完成这个上下文BeanFactory的初始化，初始化所有剩余的 单例(非延迟初始化) Bean对象
 				finishBeanFactoryInitialization(beanFactory);
 
 				// Last step: publish corresponding event.
+				// 最后一步：发布相应的事件
+				// 	1. 清空在资源加载器中的所有资源缓存
+				//	2. 初始化 LifecycleProcessor.如果上下文中找到 'lifecycleProcessor' 的 LifecycleProcessor Bean对象， 则使用 DefaultLifecycleProcessor
+				//	3. 将刷新传播到生命周期处理器
+				//	4. 新建 ContextRefreshedEvent 事件对象，将其发布到所有监听器。
+				//	5. 注册 当前上下文 到 LiveBeansView，以支持 JMX 服务
 				finishRefresh();
 			}
 
