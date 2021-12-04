@@ -27,7 +27,7 @@ import org.springframework.core.io.ClassPathResource;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
-/**
+/** debug 2021.12.4
  * @author Rob Harrop
  */
 public class SchemaValidationTests {
