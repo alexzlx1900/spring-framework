@@ -29,7 +29,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Written with the intention of reproducing SPR-7318.
- *
+ * debug 2021.12.6
  * @author Chris Beams
  */
 public class FactoryBeanLookupTests {
