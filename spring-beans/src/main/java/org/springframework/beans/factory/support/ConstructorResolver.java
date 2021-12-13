@@ -361,6 +361,9 @@ class ConstructorResolver {
 	}
 
 	/**
+	 * 通过工厂方法实例化bean
+	 * 确定工厂对象，然后获取构造函数和构造参数，最后调用 InstantiationStrategy 对象的 instantiate() 来创建 bean 实例
+	 *
 	 * Instantiate the bean using a named factory method. The method may be static, if the
 	 * bean definition parameter specifies a class, rather than a "factory-bean", or
 	 * an instance variable on a factory object itself configured using Dependency Injection.
