@@ -58,6 +58,9 @@ public class ConfigurationClassAspectIntegrationTests {
 		assertAdviceWasApplied(AspectConfig.class);
 	}
 
+	/**
+	 * 202220903
+	 */
 	@Test
 	public void configurationIncludesAspect() {
 		assertAdviceWasApplied(ConfigurationWithAspect.class);

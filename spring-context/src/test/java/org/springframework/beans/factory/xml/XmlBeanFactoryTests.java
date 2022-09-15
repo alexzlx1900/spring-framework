@@ -857,6 +857,9 @@ public class XmlBeanFactoryTests {
 		assertTrue(rod2.getSpouse().getName().equals("Kerry"));
 	}
 
+	/**
+	 * 20220915
+	 */
 	@Test
 	public void testAutowireByConstructor() {
 		DefaultListableBeanFactory xbf = new DefaultListableBeanFactory();

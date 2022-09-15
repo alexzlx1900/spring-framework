@@ -79,6 +79,9 @@ public class AnnotationConfigApplicationContextTests {
 		assertEquals(2, beans.size());
 	}
 
+	/**
+	 * 20220827
+	 */
 	@Test
 	public void getBeanByType() {
 		ApplicationContext context = new AnnotationConfigApplicationContext(Config.class);

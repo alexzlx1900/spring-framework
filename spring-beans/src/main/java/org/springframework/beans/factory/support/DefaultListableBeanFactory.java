@@ -737,7 +737,10 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 				if (isFactoryBean(beanName)) {
 					Object bean = getBean(FACTORY_BEAN_PREFIX + beanName);
 					if (bean instanceof FactoryBean) {
+						// 5.1 通过beanName获取FactoryBean实例
+						// 通过getBean(&beanName)拿到的是FactoryBean本身；通过getBean(beanName)拿到的是FactoryBean创建的Bean实例
 						FactoryBean<?> factory = (FactoryBean<?>) bean;
+						// 5.2 判断这个FactoryBean是否希望急切的初始化
 						boolean isEagerInit;
 						if (System.getSecurityManager() != null && factory instanceof SmartFactoryBean) {
 							isEagerInit = AccessController.doPrivileged(

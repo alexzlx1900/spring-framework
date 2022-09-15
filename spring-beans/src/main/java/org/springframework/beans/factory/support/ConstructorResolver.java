@@ -601,20 +601,25 @@ class ConstructorResolver {
 	private int resolveConstructorArguments(String beanName, RootBeanDefinition mbd, BeanWrapper bw,
 			ConstructorArgumentValues cargs, ConstructorArgumentValues resolvedValues) {
 
+		// 1.构建bean定义值解析器
 		TypeConverter customConverter = this.beanFactory.getCustomTypeConverter();
 		TypeConverter converter = (customConverter != null ? customConverter : bw);
 		BeanDefinitionValueResolver valueResolver =
 				new BeanDefinitionValueResolver(this.beanFactory, beanName, mbd, converter);
 
+		// 2.minNrOfArgs初始化为indexedArgumentValues和genericArgumentValues的的参数个数总和
 		int minNrOfArgs = cargs.getArgumentCount();
 
+		// 3.遍历解析带index的参数值
 		for (Map.Entry<Integer, ConstructorArgumentValues.ValueHolder> entry : cargs.getIndexedArgumentValues().entrySet()) {
 			int index = entry.getKey();
 			if (index < 0) {
 				throw new BeanCreationException(mbd.getResourceDescription(), beanName,
 						"Invalid constructor argument index: " + index);
 			}
+			// 3.1 如果index大于minNrOfArgs，则修改minNrOfArgs
 			if (index > minNrOfArgs) {
+				// index是从0开始，并且是有序递增的，所以当有参数的index=5时，代表该方法至少有6个参数
 				minNrOfArgs = index + 1;
 			}
 			ConstructorArgumentValues.ValueHolder valueHolder = entry.getValue();
@@ -622,6 +627,7 @@ class ConstructorResolver {
 				resolvedValues.addIndexedArgumentValue(index, valueHolder);
 			}
 			else {
+				// 3.2.2 如果值还未转换过，则先进行转换
 				Object resolvedValue =
 						valueResolver.resolveValueIfNecessary("constructor argument", valueHolder.getValue());
 				ConstructorArgumentValues.ValueHolder resolvedValueHolder =
@@ -631,6 +637,7 @@ class ConstructorResolver {
 			}
 		}
 
+		// 4.遍历解析通用参数值（不带index）
 		for (ConstructorArgumentValues.ValueHolder valueHolder : cargs.getGenericArgumentValues()) {
 			if (valueHolder.isConverted()) {
 				resolvedValues.addGenericArgumentValue(valueHolder);

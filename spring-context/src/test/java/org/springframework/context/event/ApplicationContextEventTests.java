@@ -122,6 +122,9 @@ public class ApplicationContextEventTests extends AbstractApplicationEventListen
 		verify(listener, times(invocation)).onApplicationEvent(event);
 	}
 
+	/**
+	 * 20220903
+	 */
 	@Test
 	public void simpleApplicationEventMulticasterWithTaskExecutor() {
 		@SuppressWarnings("unchecked")
@@ -129,12 +132,9 @@ public class ApplicationContextEventTests extends AbstractApplicationEventListen
 		ApplicationEvent evt = new ContextClosedEvent(new StaticApplicationContext());
 
 		SimpleApplicationEventMulticaster smc = new SimpleApplicationEventMulticaster();
-		smc.setTaskExecutor(new Executor() {
-			@Override
-			public void execute(Runnable command) {
-				command.run();
-				command.run();
-			}
+		smc.setTaskExecutor(command -> {
+			command.run();
+			command.run();
 		});
 		smc.addApplicationListener(listener);
 
