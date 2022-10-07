@@ -44,6 +44,10 @@ import static org.junit.Assert.*;
  */
 public class CustomEditorConfigurerTests {
 
+	/**
+	 * 属性填充
+	 * @throws ParseException
+	 */
 	@Test
 	public void testCustomEditorConfigurerWithPropertyEditorRegistrar() throws ParseException {
 		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();

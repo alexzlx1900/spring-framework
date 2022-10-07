@@ -1581,6 +1581,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 			if (mpvs.isConverted()) {
 				// Shortcut: use the pre-converted values as-is.
 				try {
+					// 如果属性已经转化完成，直接设置，通过反射调用set方法设置
 					bw.setPropertyValues(mpvs);
 					return;
 				}
@@ -1589,23 +1590,30 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 							mbd.getResourceDescription(), beanName, "Error setting property values", ex);
 				}
 			}
+			// 如果尚未转化完成，获取原始属性值，等待后续转化
 			original = mpvs.getPropertyValueList();
 		}
 		else {
+			// 获取原始属性集合，等待后续转化
 			original = Arrays.asList(pvs.getPropertyValues());
 		}
 
+		// 获取自定义类型转化器
 		TypeConverter converter = getCustomTypeConverter();
 		if (converter == null) {
 			converter = bw;
 		}
+
+		// 获取解析器
 		BeanDefinitionValueResolver valueResolver = new BeanDefinitionValueResolver(this, beanName, mbd, converter);
 
 		// Create a deep copy, resolving any references for values.
+		// 用于保存转化后的属性值集合
 		List<PropertyValue> deepCopy = new ArrayList<>(original.size());
 		boolean resolveNecessary = false;
 		for (PropertyValue pv : original) {
 			if (pv.isConverted()) {
+				// 如果已经转化完成，直接加入deepCopy集合
 				deepCopy.add(pv);
 			}
 			else {
@@ -1644,6 +1652,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 
 		// Set our (possibly massaged) deep copy.
 		try {
+			// 设置值，通过反射调用set方法设置
 			bw.setPropertyValues(new MutablePropertyValues(deepCopy));
 		}
 		catch (BeansException ex) {
